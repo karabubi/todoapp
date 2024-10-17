@@ -1,37 +1,24 @@
 import "dotenv/config";
-import express from "express";
+import express, { json } from "express";
 import cors from "cors";
-import db from "./util/db-connect.js";
+
+import notesRoutes from "./routes/notes.js";
+import userRoutes from "./routes/users.js";
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 
 app.use(cors());
+app.use(json());
 
 app.get("/", (_, res) => {
   return res.json({ msg: "Hello World" });
 });
 
-app.get("/users", async (_, res) => {
-  try {
-    const users = await db("users");
-    return res.json(users);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ msg: "error" });
-  }
-});
+app.use("/users", userRoutes);
+app.use("/notes", notesRoutes);
 
-app.get("/notes", async (_, res) => {
-  try {
-    const notes = await db("notes");
-    return res.json(notes);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ msg: "error" });
-  }
-});
 app.listen(PORT, () => {
   console.log("api running on port " + PORT);
 });

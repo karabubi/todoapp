@@ -1,67 +1,41 @@
-import "./App.css";
-import { useState, useEffect } from "react";
+// src/App.jsx
+//import { useState, useEffect } from "react";
+//import Login from "./components/Login.jsx";
+//import NoteForm from "./components/NoteForm.jsx";
 
-const { VITE_API_URL: API_URL } = import.meta.env;
+// const storedUser = localStorage.getItem("user");
+//  if (storedUser) {
+//   setUser(JSON.parse(storedUser));
+//  }
+//  }, []);
+
+// };
+
+// return <div>{user ? <NoteForm /> : <Login onLogin={handleLogin} />}</div>;
+//}
+
+//export default App;
+//--------------------------
+// App.jsx
+import { useState, useEffect } from "react";
+import Login from "./components/Login.jsx"; // Correctly importing the default export
+import NoteForm from "./components/NoteForm.jsx"; // Assuming NoteForm is also default-exported
 
 function App() {
-  const [users, setUsers] = useState([]);
-  const [notes, setnotes] = useState([]);
-  useEffect(() => {
-    async function loadUsers() {
-      try {
-        const response = await fetch(`${API_URL}/users`);
-        if (!response.ok) {
-          throw new Error("Data fetching error");
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        console.log(err);
-        alert("An error occured");
-      }
-    }
-    loadUsers();
-  }, []);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    async function loadUsers() {
-      try {
-        const response = await fetch(`${API_URL}/notes`);
-        if (!response.ok) {
-          throw new Error("Data fetching error");
-        }
-        const data = await response.json();
-        setnotes(data);
-      } catch (err) {
-        console.log(err);
-        alert("An error occured");
-      }
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
-    loadUsers();
   }, []);
 
-  return (
-    <>
-      <h1>Fullstack Demo</h1>
-      <h2>
-        Showing data from <code>{API_URL}</code>
-      </h2>
-      <ul>
-        {users.map(({ id, name, email }) => (
-          <li key={id}>
-            {name} | {email}
-          </li>
-        ))}
-      </ul>
-      <ul>
-        {notes.map(({ id, title, description }) => (
-          <li key={id}>
-            {title} | {description}
-          </li>
-        ))}
-      </ul>
-    </>
-  );
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  return <div>{user ? <NoteForm /> : <Login onLogin={handleLogin} />}</div>;
 }
 
 export default App;
